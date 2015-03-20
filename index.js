@@ -1,17 +1,18 @@
 var _global = this;
 var _runner, _runnerName, _assertion, _assertionName, _assertionStyle;
 var _timeout = null;
+var _moduleName = 'waktest-module';
 exports.postMessage = function(message) {
 	if (message.name === 'httpServerDidStart') {
-		addHttpRequestHandler('/waktest-waf-lib?.*', 'waktest', 'getWaktestWafLib');
-		addHttpRequestHandler('/waktest-waf-css?.*', 'waktest', 'getWaktestWafStylesheet');
-		addHttpRequestHandler('/waktest-ssjs?.*', 'waktest', 'runSSJSTestFromRequest');
-		addHttpRequestHandler('/waktest-format?.*', 'waktest', 'formatTestFromRequest');
+		addHttpRequestHandler('/waktest-waf-lib?.*', _moduleName, 'getWaktestWafLib');
+		addHttpRequestHandler('/waktest-waf-css?.*', _moduleName, 'getWaktestWafStylesheet');
+		addHttpRequestHandler('/waktest-ssjs?.*', _moduleName, 'runSSJSTestFromRequest');
+		addHttpRequestHandler('/waktest-format?.*', _moduleName, 'formatTestFromRequest');
 	} else if (message.name === 'httpServerWillStop') {
-		removeHttpRequestHandler('/waktest-waf-lib?.*', 'waktest', 'getWaktestWafLib');
-		removeHttpRequestHandler('/waktest-waf-css?.*', 'waktest', 'getWaktestWafStylesheet');
-		removeHttpRequestHandler('/waktest-ssjs?.*', 'waktest', 'runSSJSTestFromRequest');
-		removeHttpRequestHandler('/waktest-format?.*', 'waktest', 'formatTestFromRequest');
+		removeHttpRequestHandler('/waktest-waf-lib?.*', _moduleName, 'getWaktestWafLib');
+		removeHttpRequestHandler('/waktest-waf-css?.*', _moduleName, 'getWaktestWafStylesheet');
+		removeHttpRequestHandler('/waktest-ssjs?.*', _moduleName, 'runSSJSTestFromRequest');
+		removeHttpRequestHandler('/waktest-format?.*', _moduleName, 'formatTestFromRequest');
 	}
 };
 exports.getWaktestWafLib = function(request, response) {

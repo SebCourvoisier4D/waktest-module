@@ -1,6 +1,6 @@
 ## Unit Test Module for [Wakanda](http://wakanda.org)
 
-This Module is part of a set of Unit Testing tools for [Wakanda](http://wakanda.org):
+This Module is part of a set of Unit Testing tools for [Wakanda Server](http://wakanda.org):
 
 * [Unit Test Widget](https://github.com/SebCourvoisier4D/waktest-widget.git) for Wakanda WAF
 * [Unit Test Add-On](https://github.com/SebCourvoisier4D/waktest-addon.git) for Wakanda Studio
@@ -22,15 +22,13 @@ This Module integrates the following test libraries:
 
 1. Import the Module using the Add-ons tool of Wakanda Studio, via its URL: https://github.com/SebCourvoisier4D/waktest-module.git
 2. Right-click on the **"waktest-module/index.js"** file, then select the **Set as RPC** and **Set as Service** options
-3. Edit the settings of your Project (*Source* mode) in order to enable the **waktest-module service**:
-```xml
+3. Edit the settings of your Project (*Source* mode) in order to enable the **waktest-module service**:```xml
 <service name="waktest-module" modulePath="waktest-module" enabled="true" autoStart="true"/>
 ```
-1. Also make sure that the **reuseContexts** option is **disabled**:
-```xml
+4. Also make sure that the **reuseContexts** option is **disabled**:```xml
 <javaScript reuseContexts="false"/>
 ```
-1. Reload your Solution
+5. Reload your Solution
 
 ### Usage (Server-Side tests)
 
