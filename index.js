@@ -57,7 +57,7 @@ exports.getWaktestWafLib = function(request, response) {
 	if (typeof query.path !== 'undefined' && query.path) {
 		libContent.push('var _waktest_path = \'' + query.path + '\';');
 		libContent.push('var _waktest_paths = [];');
-		if (/^\//.test(query.path) === true) {
+		if (/^\//.test(query.path) === true || /^\w:\//.test(query.path) === true) {
 			if (File.isFile(query.path) === true) {
 				var testScript = new File(query.path);
 			} else if (Folder.isFolder(query.path) === true) {
