@@ -1,4 +1,4 @@
-## Unit Test Module for [Wakanda](http://wakanda.org)
+## Unit Test Module for [Wakanda Server](http://wakanda.org)
 
 This Module is part of a set of Unit Testing tools for [Wakanda Server](http://wakanda.org):
 
