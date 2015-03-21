@@ -49,6 +49,7 @@ exports.getWaktestWafLib = function(request, response) {
 	if (bootstrap.exists === true) {
 		libContent.push(bootstrap.toString());
 	}
+	libContent.push('document.body.focus();');
 	libContent.push('runner.name = \'' + runner + '\';');
 	libContent.push('runner.assertion = \'' + assertion + '\';');
 	libContent.push('runner.style = \'' + assertionStyle + '\';');
