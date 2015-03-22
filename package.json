@@ -1,17 +1,1 @@
-{
-    "name": "waktest-module",   
-    "type": "module",
-    "description": "Unit Test Module for Wakanda Server",
-    "version": "0.0.1",
-    "author" : "sebastien.courvoisier@4d.com",
-    "copyright": "(c) 2015 Wakanda",
-    "homepage": "http://wakanda.org",
-    "repository" : {
-        "type" : "git",
-        "url" : "https://github.com/SebCourvoisier4D/waktest-module.git"
-    },
-    "main" : "./index",
-    "keywords": ["wakanda", "module", "unit test", "mocha", "chai", "junit"],
-    "engines": {"wakanda": ">= 11"},
-    "license": "MIT"
-}
+{"name":"waktest-module","type":"module","description":"Unit Test Module for Wakanda Server","version":"0.0.1","author":"sebastien.courvoisier@4d.com","copyright":"(c) 2015 Wakanda","homepage":"http://wakanda.org","repository":{"type":"git","url":"https://github.com/SebCourvoisier4D/waktest-module.git"},"main":"./index","keywords":["wakanda","module","unit test","mocha","chai","junit"],"engines":{"wakanda":">= 11"},"license":"MIT"}

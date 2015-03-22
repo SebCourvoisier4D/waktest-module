@@ -33,6 +33,10 @@ exports.getWaktestWafLib = function(request, response) {
 	if (typeof query.assertionStyle !== 'undefined' && query.assertionStyle) {
 		assertionStyle = query.assertionStyle;
 	}
+	var jQuerysimulateLib = new File(basePath + 'vendor/jquery.simulate.js');
+	if (jQuerysimulateLib.exists === true) {
+		libContent.push(jQuerysimulateLib.toString());
+	}
 	var assertionLib = new File(basePath + 'vendor/' + assertion + '.js');
 	if (assertionLib.exists === true) {
 		libContent.push(assertionLib.toString());
