@@ -106,7 +106,7 @@ exports.getWaktestWafLib = function(request, response) {
 		}
 	}
 	if (typeof query.widgetId !== 'undefined' && query.widgetId) {
-		libContent.push('if (typeof _waktest_waf_ready === \'function\') setTimeout(_waktest_waf_ready, 500);');
+		libContent.push('if (typeof _waktest_waf_ready === \'function\') setTimeout(_waktest_waf_ready, 750);');
 	}
 	return libContent.join('\n');
 };
