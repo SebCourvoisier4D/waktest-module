@@ -208,8 +208,8 @@ body {
 	overflow: hidden;
 }
 #waktest-waf-log .test.pending:hover h2::after {
-	content: '(pending)';
-	font-family: arial, sans-serif;
+	content: ' (skipped)';
+	font-style: italic;
 }
 #waktest-waf-log .test.pass.medium .duration {
 	background: #c09853;
@@ -243,11 +243,15 @@ body {
 	display: none;
 }
 #waktest-waf-log .test.pending {
-	color: #0b97c4;
+	color: #b9b9b9;
 }
 #waktest-waf-log .test.pending::before {
 	content: '◦';
-	color: #0b97c4;
+	color: #b9b9b9;
+	font-size: 12px;
+	display: block;
+	float: left;
+	margin-right: 5px;
 }
 #waktest-waf-log .test.fail {
 	color: #c00;

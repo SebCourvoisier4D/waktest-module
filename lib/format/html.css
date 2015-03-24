@@ -50,8 +50,8 @@ body {
 	overflow: hidden;
 }
 #waktest-report .test.pending:hover h2::after {
-	content: '(pending)';
-	font-family: arial, sans-serif;
+	content: ' (skipped)';
+	font-style: italic;
 }
 #waktest-report .test.pass.medium .duration {
 	background: #c09853;
@@ -85,11 +85,15 @@ body {
 	display: none;
 }
 #waktest-report .test.pending {
-	color: #0b97c4;
+	color: #b9b9b9;
 }
 #waktest-report .test.pending::before {
 	content: '◦';
-	color: #0b97c4;
+	color: #b9b9b9;
+	font-size: 12px;
+	display: block;
+	float: left;
+	margin-right: 5px;
 }
 #waktest-report .test.fail {
 	color: #c00;
