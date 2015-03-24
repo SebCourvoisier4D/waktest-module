@@ -103,7 +103,7 @@ http://127.0.0.1:8081/waktest-ssjs?path=/path/to/your/testFileOrFolder&format=JU
 
 #### Result
 
-The *run()* method returns an Object by default (or a JSON string when run from the browser):
+The *run()* method returns an Object by default (or a HTML content when run from the browser):
 
 ```json
 {
