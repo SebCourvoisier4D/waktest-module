@@ -8,12 +8,18 @@ exports.postMessage = function(message) {
 		addHttpRequestHandler('/waktest-waf-css?.*', _moduleName, 'getWaktestWafStylesheet');
 		addHttpRequestHandler('/waktest-ssjs?.*', _moduleName, 'runSSJSTestFromRequest');
 		addHttpRequestHandler('/waktest-format?.*', _moduleName, 'formatTestFromRequest');
+		addHttpRequestHandler('/waktest-available?.*', _moduleName, 'availableFromRequest');
 	} else if (message.name === 'httpServerWillStop') {
 		removeHttpRequestHandler('/waktest-waf-lib?.*', _moduleName, 'getWaktestWafLib');
 		removeHttpRequestHandler('/waktest-waf-css?.*', _moduleName, 'getWaktestWafStylesheet');
 		removeHttpRequestHandler('/waktest-ssjs?.*', _moduleName, 'runSSJSTestFromRequest');
 		removeHttpRequestHandler('/waktest-format?.*', _moduleName, 'formatTestFromRequest');
+		removeHttpRequestHandler('/waktest-available?.*', _moduleName, 'availableFromRequest');
 	}
+};
+exports.availableFromRequest = function (request, response) {
+	response.contentType = 'application/json';
+	return JSON.stringify({available: true});
 };
 exports.getWaktestWafLib = function(request, response) {
 	response.contentType = 'application/javascript';
