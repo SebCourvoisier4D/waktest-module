@@ -90,6 +90,7 @@ var result = unitTest.run(new Folder('/path/to/my/folderOfTests/'));
 var unitTest = require('waktest-module');
 unitTest.init('mocha', 'chai', null, null, {recursive: true});
 var result = unitTest.run('/path/to/my/folderOfTests/');
+```
 
 #### Run remotely (from a browser)
 
