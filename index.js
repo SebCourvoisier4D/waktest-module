@@ -1,5 +1,5 @@
 var _global = this;
-var _runner, _runnerName, _assertion, _assertionName, _assertionStyle;
+var _runner, _runnerName, _assertion, _assertionName, _assertionStyle, _waktestOpts;
 var _timeout = null;
 var _moduleName = 'waktest-module';
 exports.postMessage = function(message) {
@@ -212,7 +212,7 @@ exports.formatTestFromRequest = function(request, response) {
 exports.setTimeout = function(timeout) {
 	_timeout = timeout;
 };
-exports.init = function(runnerName, assertionName, runnerOptions, assertionOptions) {
+exports.init = function(runnerName, assertionName, runnerOptions, assertionOptions, waktestOpts) {
 	var basePath = module.id.replace(/index$/i, '');
 	if (typeof runnerName === 'undefined') {
 		runnerName = 'mocha';
@@ -233,6 +233,11 @@ exports.init = function(runnerName, assertionName, runnerOptions, assertionOptio
 	if (typeof assertionOptions === 'undefined' || assertionOptions === null) {
 		assertionOptions = {};
 	}
+    if ((typeof waktestOpts === 'undefined') || (waktestOpts === null)) {
+        waktestOpts = {
+            recursive: false
+        };
+    }
 	var runnerLibFile = new File(basePath + 'vendor/' + runnerName + '.js');
 	if (runnerLibFile.exists === false) {
 		throw 'Runner library "' + runnerName + '" not found.';
@@ -280,6 +285,7 @@ exports.init = function(runnerName, assertionName, runnerOptions, assertionOptio
 	_assertionName = assertionName;
 	_assertion = _global[assertionName]
 	_runnerName = runnerName;
+    _waktestOpts = waktestOpts;
 	_runner = _global[runnerName];
 	return _runner;
 };
@@ -288,6 +294,8 @@ exports.run = function(suite, format, formatOpt) {
 	var _result = null;
 	var path = null,
 		paths = [];
+    var util = require(basePath + 'lib/util.js');
+    var filePaths;
 	if (typeof suite === 'string') {
 		path = suite;
 		if (File.isFile(suite) === true) {
@@ -313,21 +321,19 @@ exports.run = function(suite, format, formatOpt) {
 	} else if (suite instanceof Folder) {
 		path = suite.path;
 		if (suite.exists === true) {
-			var files = suite.files;
-			files.sort(function(a, b) {
-				if (a.name < b.name) return -1;
-				if (a.name > b.name) return 1;
-				return 0;
-			});
-			for (var i = 0; i < files.length; i++) {
-				if (/\.js$/.test(files[i].name) === true) {
-					paths.push(files[i].path);
-					try {
-						include(files[i]);
-					} catch (e) {
-						throw 'Test suite file "' + files[i].path + '" cannot be included: ' + JSON.stringify(e);
-					}
-				}
+            if (_waktestOpts.recursive) {
+                filePaths = util.getJsFilePathsForFolderRecursive(suite);
+            } else {
+                filePaths = util.getJsFilePathsForFolder(suite);
+            }
+
+			for (var i = 0; i < filePaths.length; i++) {
+                paths.push(filePaths[i]);
+                try {
+                    include(filePaths[i]);
+                } catch (e) {
+                    throw 'Test suite file "' + filePaths[i] + '" cannot be included: ' + JSON.stringify(e);
+                }
 			}
 		} else {
 			throw 'Test suite folder "' + suite.path + '" not found.';

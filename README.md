@@ -83,6 +83,14 @@ var unitTest = require('waktest-module');
 unitTest.init();
 var result = unitTest.run(new Folder('/path/to/my/folderOfTests/'));
 ```
+
+#### External folder (will run all the .js files in it, and recursively all .js files in any subfolders)
+
+```javascript
+var unitTest = require('waktest-module');
+unitTest.init('mocha', 'chai', null, null, {recursive: true});
+var result = unitTest.run('/path/to/my/folderOfTests/');
+
 #### Run remotely (from a browser)
 
 Once the Server is running, open the following URL (assuming your Project runs on 127.0.0.1:8081):
