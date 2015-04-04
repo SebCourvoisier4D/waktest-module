@@ -138,6 +138,7 @@ exports.runSSJSTestFromRequest = function(request, response) {
 	var assertionName = 'chai';
 	var assertionStyle = 'bdd';
 	var format = 'html'; // html by default
+    var waktestOpts = {};
 	var basePath = module.id.replace(/index$/i, '');
 	var util = require(basePath + 'lib/util.js');
 	var query = util.getQueryParameters(request);
@@ -153,10 +154,13 @@ exports.runSSJSTestFromRequest = function(request, response) {
 	if (typeof query.format !== 'undefined' && query.format) {
 		format = query.format;
 	}
+    if (typeof query.recursive !== 'undefined' && query.recursive) {
+        waktestOpts.recursive = (query.recursive.toLowerCase() === 'true');
+    }
 	_global.runner = this.init(runnerName, assertionName, {
 		setup: assertionStyle,
 		reporter: 'wakanda-ssjs'
-	});
+	}, null, waktestOpts);
 	_global.runner.name = runnerName;
 	_global.runner.assertion = assertionName;
 	_global.runner.style = assertionStyle;
