@@ -1,25 +1,13 @@
 var _global = this;
 var _runner, _runnerName, _assertion, _assertionName, _assertionStyle, _waktestOpts;
 var _timeout = null;
-var _moduleName = 'waktest-module';
-exports.postMessage = function(message) {
-	if (message.name === 'httpServerDidStart') {
-		addHttpRequestHandler('/waktest-waf-lib?.*', _moduleName, 'getWaktestWafLib');
-		addHttpRequestHandler('/waktest-waf-css?.*', _moduleName, 'getWaktestWafStylesheet');
-		addHttpRequestHandler('/waktest-ssjs?.*', _moduleName, 'runSSJSTestFromRequest');
-		addHttpRequestHandler('/waktest-format?.*', _moduleName, 'formatTestFromRequest');
-		addHttpRequestHandler('/waktest-available?.*', _moduleName, 'availableFromRequest');
-	} else if (message.name === 'httpServerWillStop') {
-		removeHttpRequestHandler('/waktest-waf-lib?.*', _moduleName, 'getWaktestWafLib');
-		removeHttpRequestHandler('/waktest-waf-css?.*', _moduleName, 'getWaktestWafStylesheet');
-		removeHttpRequestHandler('/waktest-ssjs?.*', _moduleName, 'runSSJSTestFromRequest');
-		removeHttpRequestHandler('/waktest-format?.*', _moduleName, 'formatTestFromRequest');
-		removeHttpRequestHandler('/waktest-available?.*', _moduleName, 'availableFromRequest');
-	}
-};
-exports.availableFromRequest = function (request, response) {
+var _moduleName = 'unitTest';
+
+exports.availableFromRequest = function(request, response) {
 	response.contentType = 'application/json';
-	return JSON.stringify({available: true});
+	return JSON.stringify({
+		available: true
+	});
 };
 exports.getWaktestWafLib = function(request, response) {
 	response.contentType = 'application/javascript';
@@ -138,7 +126,7 @@ exports.runSSJSTestFromRequest = function(request, response) {
 	var assertionName = 'chai';
 	var assertionStyle = 'bdd';
 	var format = 'html'; // html by default
-    var waktestOpts = {};
+	var waktestOpts = {};
 	var basePath = module.id.replace(/index$/i, '');
 	var util = require(basePath + 'lib/util.js');
 	var query = util.getQueryParameters(request);
@@ -154,9 +142,9 @@ exports.runSSJSTestFromRequest = function(request, response) {
 	if (typeof query.format !== 'undefined' && query.format) {
 		format = query.format;
 	}
-    if (typeof query.recursive !== 'undefined' && query.recursive) {
-        waktestOpts.recursive = (query.recursive.toLowerCase() === 'true');
-    }
+	if (typeof query.recursive !== 'undefined' && query.recursive) {
+		waktestOpts.recursive = (query.recursive.toLowerCase() === 'true');
+	}
 	_global.runner = this.init(runnerName, assertionName, {
 		setup: assertionStyle,
 		reporter: 'wakanda-ssjs'
@@ -237,69 +225,80 @@ exports.init = function(runnerName, assertionName, runnerOptions, assertionOptio
 	if (typeof assertionOptions === 'undefined' || assertionOptions === null) {
 		assertionOptions = {};
 	}
-    if ((typeof waktestOpts === 'undefined') || (waktestOpts === null)) {
-        waktestOpts = {
-            recursive: false
-        };
-    }
-	var runnerLibFile = new File(basePath + 'vendor/' + runnerName + '.js');
-	if (runnerLibFile.exists === false) {
-		throw 'Runner library "' + runnerName + '" not found.';
-	}
-	var assertionLibFile = new File(basePath + 'vendor/' + assertionName + '.js');
-	if (assertionLibFile.exists === false) {
-		throw 'Assertion library "' + assertionName + '" not found.';
-	}
-	try {
-		_global.location = {};
-		include(runnerLibFile);
-	} catch (e) {
-		throw 'Runner library "' + runnerName + '" cannot be included: ' + JSON.stringify(e);
-	}
-	try {
-		include(assertionLibFile);
-	} catch (e) {
-		throw 'Assertion library "' + assertionName + '" cannot be included: ' + JSON.stringify(e);
-	}
-	var assertionStyle = 'bdd';
-	for (var option in runnerOptions) {
-		if (typeof _global[runnerName][option] !== 'function') {
-			throw 'The "' + option + '" option is not available in the "' + runnerName + '" runner library';
-		} else {
-			_global[runnerName][option](runnerOptions[option]);
-			if (runnerOptions[option].toLowerCase() === 'bdd') {
-				assertionStyle = 'bdd';
-			} else if (runnerOptions[option].toLowerCase() === 'tdd') {
-				assertionStyle = 'tdd';
+	if (runnerName.toLowerCase() !== 'yuitest') {
+		if ((typeof waktestOpts === 'undefined') || (waktestOpts === null)) {
+			waktestOpts = {
+				recursive: false
+			};
+		}
+		var runnerLibFile = new File(basePath + 'vendor/' + runnerName + '.js');
+		if (runnerLibFile.exists === false) {
+			throw 'Runner library "' + runnerName + '" not found.';
+		}
+		var assertionLibFile = new File(basePath + 'vendor/' + assertionName + '.js');
+		if (assertionLibFile.exists === false) {
+			throw 'Assertion library "' + assertionName + '" not found.';
+		}
+		try {
+			_global.location = {};
+			include(runnerLibFile);
+		} catch (e) {
+			throw 'Runner library "' + runnerName + '" cannot be included: ' + JSON.stringify(e);
+		}
+		try {
+			include(assertionLibFile);
+		} catch (e) {
+			throw 'Assertion library "' + assertionName + '" cannot be included: ' + JSON.stringify(e);
+		}
+		var assertionStyle = 'bdd';
+		for (var option in runnerOptions) {
+			if (typeof _global[runnerName][option] !== 'function') {
+				throw 'The "' + option + '" option is not available in the "' + runnerName + '" runner library';
+			} else {
+				_global[runnerName][option](runnerOptions[option]);
+				if (runnerOptions[option].toLowerCase() === 'bdd') {
+					assertionStyle = 'bdd';
+				} else if (runnerOptions[option].toLowerCase() === 'tdd') {
+					assertionStyle = 'tdd';
+				}
 			}
 		}
-	}
-	for (var option in assertionOptions) {
-		if (typeof _global[assertionName][option] !== 'function') {
-			throw 'The "' + option + '" option is not available in the "' + assertionName + '" assertion library';
-		} else {
-			_global[assertionName][option](assertionOptions[option]);
+		for (var option in assertionOptions) {
+			if (typeof _global[assertionName][option] !== 'function') {
+				throw 'The "' + option + '" option is not available in the "' + assertionName + '" assertion library';
+			} else {
+				_global[assertionName][option](assertionOptions[option]);
+			}
 		}
-	}
-	var bootstrap = new File(basePath + 'vendor/bootstrap/ssjs-' + runnerName + '-' + assertionName + '-' + assertionStyle + '.js');
-	if (bootstrap.exists === true) {
-		include(bootstrap);
-	}
+		var bootstrap = new File(basePath + 'vendor/bootstrap/ssjs-' + runnerName + '-' + assertionName + '-' + assertionStyle + '.js');
+		if (bootstrap.exists === true) {
+			include(bootstrap);
+		}
+		_assertion = _global[assertionName]
+		_runner = _global[runnerName];
+	}	
 	_assertionStyle = assertionStyle;
 	_assertionName = assertionName;
-	_assertion = _global[assertionName]
 	_runnerName = runnerName;
-    _waktestOpts = waktestOpts;
-	_runner = _global[runnerName];
+	_waktestOpts = waktestOpts;
 	return _runner;
 };
 exports.run = function(suite, format, formatOpt) {
+	if (typeof _runnerName === 'undefined' || !_runnerName) {
+		throw 'Test runner not defined, please call the init() method before running the test.';
+	}
 	var basePath = module.id.replace(/index$/i, '');
+	if (_runnerName.toLowerCase() === 'yuitest') {
+		if (typeof suite === 'undefined' && typeof testCase !== 'undefined') {
+			suite = testCase;
+		}
+		return require(basePath + 'lib/deprecated').run(suite, format);
+	}
 	var _result = null;
 	var path = null,
-		paths = [];
-    var util = require(basePath + 'lib/util.js');
-    var filePaths;
+	paths = [];
+	var util = require(basePath + 'lib/util.js');
+	var filePaths;
 	if (typeof suite === 'string') {
 		path = suite;
 		if (File.isFile(suite) === true) {
@@ -325,19 +324,19 @@ exports.run = function(suite, format, formatOpt) {
 	} else if (suite instanceof Folder) {
 		path = suite.path;
 		if (suite.exists === true) {
-            if (_waktestOpts.recursive) {
-                filePaths = util.getJsFilePathsForFolderRecursive(suite);
-            } else {
-                filePaths = util.getJsFilePathsForFolder(suite);
-            }
+			if (_waktestOpts.recursive) {
+				filePaths = util.getJsFilePathsForFolderRecursive(suite);
+			} else {
+				filePaths = util.getJsFilePathsForFolder(suite);
+			}
 
 			for (var i = 0; i < filePaths.length; i++) {
-                paths.push(filePaths[i]);
-                try {
-                    include(filePaths[i]);
-                } catch (e) {
-                    throw 'Test suite file "' + filePaths[i] + '" cannot be included: ' + JSON.stringify(e);
-                }
+				paths.push(filePaths[i]);
+				try {
+					include(filePaths[i]);
+				} catch (e) {
+					throw 'Test suite file "' + filePaths[i] + '" cannot be included: ' + JSON.stringify(e);
+				}
 			}
 		} else {
 			throw 'Test suite folder "' + suite.path + '" not found.';
@@ -350,7 +349,7 @@ exports.run = function(suite, format, formatOpt) {
 		if (typeof _global.runner.name === 'undefined') _global.runner.name = _runnerName;
 		if (typeof _global.runner.assertion === 'undefined') _global.runner.assertion = _assertionName;
 		if (typeof _global.runner.style === 'undefined') _global.runner.style = _assertionStyle
-		if (typeof _global.runner.request === 'undefined') _global.runner.request = {};
+			if (typeof _global.runner.request === 'undefined') _global.runner.request = {};
 		if (typeof _global.runner.queryParams === 'undefined') _global.runner.queryParams = {
 			path: path,
 			format: format
@@ -363,6 +362,17 @@ exports.run = function(suite, format, formatOpt) {
 			wait();
 		}
 		_result = _runner._wakanda_report;
+		if (typeof studio === 'object' && typeof application !== 'object') {
+			_result.context = 'studio';
+		} else if (typeof navigator !== "object" && typeof application !== "object") {
+			_result.context = 'cli';
+		} else if (typeof navigator !== "object" && typeof application === "object") {
+			_result.context = 'ssjs';
+		} else if (typeof navigator === "object") {
+			_result.context = 'csjs';
+		} else {
+			_result.context = 'unknown';
+		}
 		if (path !== null) {
 			_result.path = path;
 			for (var i = 0; i < paths.length; i++) {
@@ -384,4 +394,97 @@ exports.run = function(suite, format, formatOpt) {
 		}
 	}
 	return _result;
+};
+
+exports.start = function() {
+	var basePath = module.id.replace(/index$/i, '');
+	addHttpRequestHandler('/waktest-waf-lib?.*', _moduleName, 'getWaktestWafLib');
+	addHttpRequestHandler('/waktest-waf-css?.*', _moduleName, 'getWaktestWafStylesheet');
+	addHttpRequestHandler('/waktest-ssjs?.*', _moduleName, 'runSSJSTestFromRequest');
+	addHttpRequestHandler('/waktest-format?.*', _moduleName, 'formatTestFromRequest');
+	addHttpRequestHandler('/waktest-available?.*', _moduleName, 'availableFromRequest');
+
+	// deprecated stuff:
+	addHttpRequestHandler('/testReporter', basePath + 'lib/deprecated/reporter.js', 'reporterHandler');
+	addHttpRequestHandler('/testServer?.*', basePath + 'lib/deprecated/server.js', 'serverHandler');
+	addHttpRequestHandler('/testClient?.*', basePath + 'lib/deprecated/client.js', 'clientHandler');
+	addHttpRequestHandler('/testSimple', basePath + 'lib/deprecated/simple.js', 'simpleHandler');
+	addHttpRequestHandler('/testEcho/.*', basePath + 'lib/deprecated/echo.js', 'echoHandler');
+	addHttpRequestHandler('/getenv', basePath + 'lib/deprecated/getenv.js', 'getenvHandler');
+	addHttpRequestHandler('/writelog', basePath + 'lib/deprecated/writelog.js', 'writelogHandler');
+	addHttpRequestHandler('/unitTest\\.js.*', basePath + 'lib/deprecated/unitTest.js', 'unitTestHandler');
+	return true;
+};
+
+exports.stop = function() {
+	var basePath = module.id.replace(/index$/i, '');
+	removeHttpRequestHandler('/waktest-waf-lib?.*', _moduleName, 'getWaktestWafLib');
+	removeHttpRequestHandler('/waktest-waf-css?.*', _moduleName, 'getWaktestWafStylesheet');
+	removeHttpRequestHandler('/waktest-ssjs?.*', _moduleName, 'runSSJSTestFromRequest');
+	removeHttpRequestHandler('/waktest-format?.*', _moduleName, 'formatTestFromRequest');
+	removeHttpRequestHandler('/waktest-available?.*', _moduleName, 'availableFromRequest');
+
+	// deprecated stuff:
+	removeHttpRequestHandler('/testReporter', basePath + 'lib/deprecated/reporter.js', 'reporterHandler');
+	removeHttpRequestHandler('/testServer?.*', basePath + 'lib/deprecated/server.js', 'serverHandler');
+	removeHttpRequestHandler('/testClient?.*', basePath + 'lib/deprecated/client.js', 'clientHandler');
+	removeHttpRequestHandler('/testSimple', basePath + 'lib/deprecated/simple.js', 'simpleHandler');
+	removeHttpRequestHandler('/testEcho/.*', basePath + 'lib/deprecated/echo.js', 'echoHandler');
+	removeHttpRequestHandler('/getenv', basePath + 'lib/deprecated/getenv.js', 'getenvHandler');
+	removeHttpRequestHandler('/writelog', basePath + 'lib/deprecated/writelog.js', 'writelogHandler');
+	removeHttpRequestHandler('/unitTest\\.js.*', basePath + 'lib/deprecated/unitTest.js', 'unitTestHandler');
+	return true;
+};
+
+// deprecated stuff:
+exports.getClass = function(obj) {
+	if (typeof obj === 'undefined') return 'undefined';
+	if (obj === null) return 'null';
+	if (typeof obj === 'function') return 'Function';
+	return Object.prototype.toString.call(obj).match(/^\[object\s(.*)\]$/)[1];
+};
+
+exports.isJSCore = function() {
+	if (typeof Uint8Array === 'undefined') {
+		return true;
+	}
+	return false;
+};
+
+exports.isV8 = function() {
+	if (typeof Uint8Array === 'undefined') {
+		return false;
+	}
+	return true;
+};
+
+exports.isCLI = function() {
+	return ((typeof navigator !== "object") && (typeof application === "undefined"));
+};
+
+exports.isServerSide = function() {
+	return (typeof navigator !== "object");
+}
+
+exports.getGlobal = function() {
+	if (this.isCLI()) return _global;
+	if (this.isServerSide()) return application;
+	return window;
+}
+
+exports.getenv = function() {
+	var envVars = {};
+	if (this.isServerSide() || isCLI()) {
+		envVars = process.env;
+	} else {
+		var myXHR = new XMLHttpRequest();
+		myXHR.open("GET", "http://" + location.host + "/getenv", false);
+		try {
+			myXHR.send(null);
+			envVars = JSON.parse(myXHR.responseText);
+		} catch (e) {
+			envVars = {};
+		}
+	}
+	return envVars;
 };

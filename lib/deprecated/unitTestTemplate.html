@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <title>Test {title}</title>
+    <style type="text/css">
+        ol, ul {
+            margin: 16px 0;
+            padding-left: 40px; 
+        }
+        blockquote {
+            margin: 16px 40px; 
+        }
+        body {
+            margin: 8px;
+        }
+        h1, h2, h3 {
+            margin: 20px 0;
+        }
+    </style>
+</head>
+<body id="waf-body" data-type="document" data-theme="metal" data-rpc-validation="false" data-rpc-namespace="rpc" data-rpc-activate="true" data-lib="WAF" style="">
+    <h1>Test {title} (Client-Side)</h1>
+    <div id="unitTestLog"></div>
+    <script type="text/javascript">
+        {test}
+        var onUnitTestReady = function () {
+            window.setTimeout(function () { unitTest.run(testCase, function () {
+              this.sendXmlReport("http://" + location.host + "/testReporter/", "{jobLocation}{jobId}");
+              document.getElementById("unitTestLog").innerHTML = this.getHtmlReport();
+          });}, 8000);
+        };
+    </script>
+    <script type="text/javascript" src="/waLib/WAF/Loader.js"></script>
+    <script type="text/javascript" src="/unitTest.js"></script>
+</body>
+</html>
