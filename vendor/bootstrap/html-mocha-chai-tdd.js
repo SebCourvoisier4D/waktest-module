@@ -11,6 +11,12 @@ function eventually (done, assertions) {
 	}
 }
 var _waktestRun = function _waktestRun() {
-	$('#waktest-waf-log').html('');
+	try {
+        document.getElementById('waktest-waf-log').innerHTML = '';
+    } catch (e) {
+        var elt = document.createElement('div');
+        elt.setAttribute('id', 'waktest-waf-log');
+        document.body.appendChild(elt);
+    }
 	runner.run();
 };

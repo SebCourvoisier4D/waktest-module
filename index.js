@@ -29,7 +29,9 @@ exports.getWaktestWafLib = function(request, response) {
 	}
 	var jQuerysimulateLib = new File(basePath + 'vendor/jquery.simulate.js');
 	if (jQuerysimulateLib.exists === true) {
+		libContent.push('if (typeof jQuery !== \'undefined\') {');
 		libContent.push(jQuerysimulateLib.toString());
+		libContent.push('}');
 	}
 	var assertionLib = new File(basePath + 'vendor/' + assertion + '.js');
 	if (assertionLib.exists === true) {
@@ -100,6 +102,7 @@ exports.getWaktestWafLib = function(request, response) {
 		}
 	}
 	if (typeof query.widgetId !== 'undefined' && query.widgetId) {
+		libContent.push('runner.widgetId = \'' + query.widgetId + '\';');
 		libContent.push('if (typeof _waktest_waf_ready === \'function\') _waktest_waf_ready();');
 	}
 	return libContent.join('\n');
